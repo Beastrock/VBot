@@ -68,7 +68,7 @@ class Plugin(object):
         return not user.status
 
     async def lock(self, user, message=None):
-        with db.atomic():
+        async with db.atomic():
             r = await self.is_mine(user)
 
             if r:
@@ -91,7 +91,7 @@ class Plugin(object):
             return True, ""
 
     async def unlock(self, user):
-        with db.atomic():
+        async with db.atomic():
             r = await self.is_free(user)
             if r:
                 return True
@@ -115,7 +115,7 @@ class Plugin(object):
         return r[0].value
 
     async def set_user_status(self, user, value):
-        with db.atomic():
+        async with db.atomic():
             try:
                 await db.execute(Status.delete().where(
                     (Status.user_id == user.user_id) &
@@ -133,7 +133,7 @@ class Plugin(object):
             return True
 
     async def clear_user(self, user):
-        with db.atomic():
+        async with db.atomic():
             await self.unlock(user)
             await self.set_user_status(user, 0)
 
