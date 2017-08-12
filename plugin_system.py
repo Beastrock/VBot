@@ -68,38 +68,40 @@ class Plugin(object):
         return not user.status
 
     async def lock(self, user, message=None):
-        r = await self.is_mine(user)
+        with db.atomic():
+            r = await self.is_mine(user)
 
-        if r:
+            if r:
+                return True, ""
+
+            r = await self.is_free(user)
+
+            if not r:
+                return r, user.status_locked_message
+
+            user.status = self.plugin_id
+
+            if message is None:
+                user.status_locked_message = f"Вы заняты в плагине: {self.name}"
+            else:
+                user.status_locked_message = message
+
+            await db.update(user)
+
             return True, ""
 
-        r = await self.is_free(user)
-
-        if not r:
-            return r, user.status_locked_message
-
-        user.status = self.plugin_id
-
-        if message is None:
-            user.status_locked_message = f"Вы заняты в плагине: {self.name}"
-        else:
-            user.status_locked_message = message
-
-        await db.update(user)
-
-        return True, ""
-
     async def unlock(self, user):
-        r = await self.is_free(user)
-        if r:
+        with db.atomic():
+            r = await self.is_free(user)
+            if r:
+                return True
+
+            user.status = ""
+            user.status_locked_message = ""
+
+            await db.update(user)
+
             return True
-
-        user.status = None
-        user.status_locked_message = None
-
-        await db.update(user)
-
-        return True
 
     async def get_user_status(self, user):
         r = await db.execute(Status.select().where(
@@ -113,25 +115,27 @@ class Plugin(object):
         return r[0].value
 
     async def set_user_status(self, user, value):
-        try:
-            await db.execute(Status.delete().where(
-                (Status.user_id == user.user_id) &
-                (Status.plugin_id == self.plugin_id))
-            )
+        with db.atomic():
+            try:
+                await db.execute(Status.delete().where(
+                    (Status.user_id == user.user_id) &
+                    (Status.plugin_id == self.plugin_id))
+                )
 
-            await db.create(Status, user_id=user.user_id, plugin_id=self.plugin_id, value=value)
+                await db.create(Status, user_id=user.user_id, plugin_id=self.plugin_id, value=value)
 
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
 
-            return False
+                return False
 
-        return True
+            return True
 
     async def clear_user(self, user):
-        await self.unlock(user)
-        await self.set_user_status(user, 0)
+        with db.atomic():
+            await self.unlock(user)
+            await self.set_user_status(user, 0)
 
     @staticmethod
     def log(message: str):
