@@ -325,14 +325,14 @@ class Bot(object):
         if await get_or_none(Role, user_id=user_id, role="blacklisted") or \
                 await get_or_none(Role, user_id=peer_id, role="blacklisted"):
             if settings.BLACKLIST_MESSAGE:
-                await self.vk.method("messages.send", {"user_id": peer_id, "message": settings.BLACKLIST_MESSAGE})
+                await self.vk.method("messages.send", {"user_id": user_id, "message": settings.BLACKLIST_MESSAGE})
 
             return
 
         # Если ID может писать боту или белый список отключён
-        if self.WHITELISTED and not await get_or_none(Role, user_id=peer_id, role="whitelisted"):
+        if self.WHITELISTED and not await get_or_none(Role, user_id=user_id, role="whitelisted"):
             if settings.WHITELIST_MESSAGE:
-                await self.vk.method("messages.send", {"user_id": peer_id, "message": settings.WHITELIST_MESSAGE})
+                await self.vk.method("messages.send", {"user_id": user_id, "message": settings.WHITELIST_MESSAGE})
 
             return
 
