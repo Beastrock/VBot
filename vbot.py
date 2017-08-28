@@ -329,7 +329,7 @@ class Bot(object):
 
             return
 
-        # Если ID моет писать боту или белый список отключён
+        # Если ID может писать боту или белый список отключён
         if self.WHITELISTED and not await get_or_none(Role, user_id=peer_id, role="whitelisted"):
             if settings.WHITELIST_MESSAGE:
                 await self.vk.method("messages.send", {"user_id": peer_id, "message": settings.WHITELIST_MESSAGE})
