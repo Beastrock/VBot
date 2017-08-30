@@ -1,6 +1,7 @@
 import logging
 import shutil
 import sys
+import hues
 from os.path import abspath, isfile
 
 import requests
