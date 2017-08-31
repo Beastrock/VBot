@@ -202,7 +202,7 @@ class Plugin(object):
             wrapper = self.status_wrapper(func, status)
 
             if commands:  # Если написали, какие команды используются
-                # Первая команда - отображается в списке команд (чтобы не было много команд не было)
+                # Первая команда - отображается в списке команд (чтобы не было много команд)
                 self.first_command = commands[0]
 
                 for command in commands:
