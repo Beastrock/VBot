@@ -153,7 +153,7 @@ def load_settings(plugin: Plugin):
 
     values = {}
 
-    file = f"{plugin.folder}/settings.ini"
+    file = f"{plugin.folder}" + os.sep + "settings.ini"
 
     if not os.path.exists(file):
         return values

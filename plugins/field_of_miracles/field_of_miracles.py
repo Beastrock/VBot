@@ -154,7 +154,7 @@ async def main(msg, args):
 
 @plugin.on_command('поле чудес сдаюсь', 'поле чудес сдаться')
 async def give_up(msg, args):
-    if plugin.is_mine(msg.user):
+    if await plugin.is_mine(msg.user):
         await plugin.clear_user(msg.user)
 
         d = await get_or_none(FOMData, user_id=msg.user_id)

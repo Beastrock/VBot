@@ -393,7 +393,7 @@ class Message(object):
 
         if "attachments" in message:
             for raw_attach in message["attachments"]:
-                attach = Attachment.from_raw(raw_attach) # Создаём аттач
+                attach = Attachment.from_raw(raw_attach)  # Создаём аттач
 
                 self._full_attaches.append(attach)  # Добавляем к нашему внутреннему списку аттачей
 

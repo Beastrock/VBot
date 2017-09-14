@@ -9,5 +9,6 @@ log.txt
 database.db
 docs/make.bat
 
+dir
 # private plugins
 *.priv.py

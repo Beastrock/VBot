@@ -382,7 +382,7 @@ class PluginSystem(object):
                         hues.error(f"Ошибка при загрузке плагина: {filename}")
                         continue
                     try:
-                        loaded_module.plugin.folder = full_plugin_path.replace(f"/{filename}", "")
+                        loaded_module.plugin.folder = full_plugin_path.replace(os.sep + str(filename), "")
 
                         self.plugins.add(loaded_module.plugin)
                         self.register_plugin(loaded_module.plugin)
